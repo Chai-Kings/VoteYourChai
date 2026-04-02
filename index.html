@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chai Kings — Vote for Your Cup!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Tamil&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8e0ce;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 12px 40px;
+    font-family: 'Bebas Neue', cursive;
+  }
+
+  .poster {
+    background: #f5f0e8;
+    border: 4px solid #1a1a1a;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    box-shadow: 8px 8px 0 #1a1a1a;
+  }
+
+  /* HEADER */
+  .header {
+    background: #c8341a;
+    padding: 18px 22px 14px;
+    text-align: center;
+    border-bottom: 5px solid #1a1a1a;
+    position: relative;
+  }
+
+  .flag-stripe {
+    height: 6px;
+    background: linear-gradient(90deg, #FF9933 33%, #fff 33%, #fff 66%, #138808 66%);
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+  }
+
+  .official-badge {
+    display: inline-block;
+    background: #fff;
+    color: #c8341a;
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 3px 14px;
+    border: 2px solid #c8341a;
+    margin-bottom: 10px;
+  }
+
+  .brand-name {
+    font-size: 62px;
+    color: #fff;
+    line-height: 0.88;
+    text-shadow: 4px 4px 0 #8a1f08, 2px 2px 0 #8a1f08;
+    letter-spacing: 4px;
+  }
+
+  .vote-tagline {
+    font-size: 22px;
+    color: #ffd700;
+    letter-spacing: 5px;
+    margin-top: 6px;
+    text-shadow: 1px 1px 0 #000;
+  }
+
+  .tamil-line {
+    font-family: 'Noto Sans Tamil', sans-serif;
+    font-size: 16px;
+    color: #ffe08a;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  .cup-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0 0;
+    gap: 16px;
+  }
+
+  .symbol-circle {
+    background: #fff;
+    border: 3px solid #ffd700;
+    border-radius: 50%;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+  }
+
+  /* SLOGAN BAR */
+  .slogan-bar {
+    background: #1a1a1a;
+    color: #ffd700;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 12px;
+    letter-spacing: 3px;
+    border-bottom: 3px solid #c8341a;
+  }
+
+  /* BALLOT SECTION */
+  .ballot-body { padding: 20px 20px 12px; }
+
+  .section-title {
+    text-align: center;
+    font-size: 21px;
+    color: #1a1a1a;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+
+  .section-sub {
+    font-family: sans-serif;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .chai-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .chai-opt:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .chai-opt {
+    background: #fff;
+    border: 2.5px solid #1a1a1a;
+    border-radius: 4px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    transition: all 0.15s;
+    position: relative;
+    user-select: none;
+  }
+
+  .chai-opt:hover {
+    background: #fff8e6;
+    border-color: #c8341a;
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 0 #c8341a;
+  }
+
+  .chai-opt.selected {
+    background: #ffefd6;
+    border-color: #c8341a;
+    border-width: 3px;
+    box-shadow: 2px 2px 0 #c8341a;
+  }
+
+  .chai-opt.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 9px; top: 50%;
+    transform: translateY(-50%);
+    color: #c8341a;
+    font-size: 15px;
+    font-family: sans-serif;
+    font-weight: 800;
+  }
+
+  .opt-num {
+    font-size: 24px;
+    color: #c8341a;
+    min-width: 22px;
+    line-height: 1;
+  }
+
+  .opt-info { flex: 1; }
+
+  .opt-name {
+    font-size: 14px;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  .opt-desc {
+    font-family: sans-serif;
+    font-size: 10px;
+    color: #888;
+    margin-top: 1px;
+  }
+
+  .opt-icon { font-size: 20px; }
+
+  /* BALLOT BOX */
+  .ballotbox-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 14px;
+    gap: 5px;
+  }
+
+  .vote-count-label {
+    font-family: sans-serif;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  /* SUBMIT BUTTON */
+  .submit-btn {
+    width: 100%;
+    background: #c8341a;
+    color: #fff;
+    border: none;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 24px;
+    letter-spacing: 4px;
+    padding: 15px;
+    cursor: pointer;
+    border-top: 4px solid #1a1a1a;
+    transition: background 0.15s;
+    display: block;
+  }
+
+  .submit-btn:hover:not(:disabled) { background: #a02812; }
+  .submit-btn:disabled { background: #888; cursor: not-allowed; }
+
+  /* RESULTS SECTION */
+  .results-section {
+    display: none;
+    padding: 18px 20px;
+    border-top: 4px solid #1a1a1a;
+    background: #fffdf5;
+  }
+
+  .results-heading {
+    font-size: 26px;
+    color: #1a1a1a;
+    text-align: center;
+    letter-spacing: 4px;
+    margin-bottom: 14px;
+    border-bottom: 2px dashed #c8341a;
+    padding-bottom: 10px;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+
+  .result-label {
+    font-size: 13px;
+    letter-spacing: 1px;
+    min-width: 132px;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-track {
+    flex: 1;
+    background: #e8e0d0;
+    border-radius: 2px;
+    height: 14px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: #c8341a;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+    min-width: 0;
+  }
+
+  .bar-fill.leading { background: #1a7a2e; }
+
+  .result-votes {
+    font-size: 14px;
+    color: #c8341a;
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .winner-banner {
+    background: #ffd700;
+    border: 2.5px solid #1a1a1a;
+    border-radius: 3px;
+    text-align: center;
+    padding: 10px 12px;
+    margin-top: 14px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: #1a1a1a;
+  }
+
+  .vote-again-btn {
+    width: 100%;
+    background: transparent;
+    border: 2.5px solid #1a1a1a;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 17px;
+    letter-spacing: 2px;
+    padding: 11px;
+    margin-top: 12px;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: background 0.15s;
+  }
+
+  .vote-again-btn:hover { background: #f0e8d8; }
+
+  /* FOOTER */
+  .footer {
+    background: #1a1a1a;
+    color: #888;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 7px 12px;
+  }
+
+  .ink-dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    background: #1a0f5e;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 380px) {
+    .brand-name { font-size: 50px; }
+    .chai-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="flag-stripe"></div>
+    <div class="official-badge">OFFICIAL ELECTION NOTICE · அதிகாரப்பூர்வ அறிவிப்பு</div>
+    <div class="brand-name">CHAI KINGS</div>
+    <div class="vote-tagline">☕ VOTE FOR YOUR CUP ☕</div>
+    <div class="tamil-line">உங்கள் சாயை தேர்ந்தெடுங்கள் — ஒரு கப் மாத்திரம்!</div>
+    <div class="cup-symbol">
+      <div class="symbol-circle">☕</div>
+    </div>
+  </div>
+
+  <!-- SLOGAN BAR -->
+  <div class="slogan-bar">
+    "OUR CUP · YOUR VOICE · ORU CUP MAATHIRAM"
+  </div>
+
+  <!-- VOTE SECTION -->
+  <div class="ballot-body" id="voteSection">
+    <div class="section-title">CAST YOUR VOTE</div>
+    <div class="section-sub">Pick one chai · Drop your ballot · See who's winning!</div>
+
+    <div class="chai-grid" id="chaiGrid"></div>
+
+    <!-- BALLOT BOX GRAPHIC -->
+    <div class="ballotbox-wrap">
+      <svg width="72" height="62" viewBox="0 0 72 62" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="22" width="56" height="36" rx="4" fill="#8B4513" stroke="#1a1a1a" stroke-width="2.5"/>
+        <rect x="5" y="17" width="62" height="11" rx="4" fill="#A0522D" stroke="#1a1a1a" stroke-width="2.5"/>
+        <rect x="29" y="17" width="14" height="4" rx="2" fill="#1a1a1a"/>
+        <rect x="17" y="31" width="38" height="3" rx="1.5" fill="#6B3410"/>
+        <rect x="17" y="38" width="38" height="3" rx="1.5" fill="#6B3410"/>
+        <text x="36" y="52" text-anchor="middle" font-family="'Bebas Neue',cursive" font-size="9" fill="#ffd700" letter-spacing="1">CHAI KINGS</text>
+        <g id="ballotPapers"></g>
+      </svg>
+      <div class="vote-count-label" id="voteCountEl">0 votes cast today</div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled onclick="castVote()">
+      🗳 DROP IN BALLOT BOX
+    </button>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div class="results-section" id="resultsSection">
+    <div class="results-heading">📊 LIVE RESULTS</div>
+    <div id="resultsList"></div>
+    <div class="winner-banner" id="winnerBanner"></div>
+    <div id="deadlineBanner" style="text-align:center;font-family:sans-serif;font-size:12px;color:#888;margin-top:10px;letter-spacing:1px;"></div>
+    <button class="vote-again-btn" onclick="resetVote()">↩ NEXT CUSTOMER — VOTE AGAIN</button>
+
+  </div>
+
+  <div class="footer">
+    <span class="ink-dot"></span>
+    CHAI KINGS ELECTION COMMISSION · CHENNAI · 2026
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ── Firebase setup ──────────────────────────────────────────
+firebase.initializeApp({
+  databaseURL: "https://chai-kings-chennai-default-rtdb.firebaseio.com"
+});
+var db        = firebase.database();
+var votesRef  = db.ref('votes');
+
+// ── Chai list ───────────────────────────────────────────────
+var chais = [
+  {id:1,  name:"Ginger Chai",       icon:"🫚", desc:"Classic adrak kick"},
+  {id:2,  name:"Elaichi Chai",      icon:"🌿", desc:"Cardamom sweetness"},
+  {id:3,  name:"Masala Chai",        icon:"☕", desc:"Bold spice blend"},
+  {id:4,  name:"Dum Chai",           icon:"🫖", desc:"Slow brewed perfection"},
+  {id:5,  name:"Zafrani Chai",       icon:"✨", desc:"Royal saffron blend"},
+  {id:6,  name:"Ginger Lemon Chai",  icon:"🍋", desc:"Zesty & warming"},
+  {id:7,  name:"Lemon Chai",         icon:"🟡", desc:"Light & tangy"},
+  {id:8,  name:"Sulaimani Chai",     icon:"🫗", desc:"Kerala black tea"},
+  {id:9,  name:"Tulsi Chai",         icon:"🌱", desc:"Holy basil healer"},
+  {id:10, name:"Hibiscus Chai",      icon:"🌺", desc:"Floral & refreshing"},
+  {id:11, name:"Green Chai",         icon:"🍃", desc:"Light & antioxidant"}
+];
+
+// ── State ────────────────────────────────────────────────────
+var votes      = {};
+var totalVotes = 0;
+var selected   = null;
+var hasVoted   = false;
+chais.forEach(function(c){ votes[c.id] = 0; });
+
+// ── Build voting grid ────────────────────────────────────────
+function buildGrid() {
+  var grid = document.getElementById('chaiGrid');
+  grid.innerHTML = '';
+  chais.forEach(function(c) {
+    var el = document.createElement('div');
+    el.className = 'chai-opt';
+    el.id = 'opt-' + c.id;
+    el.innerHTML =
+      '<span class="opt-num">' + c.id + '</span>' +
+      '<div class="opt-info"><div class="opt-name">' + c.name + '</div>' +
+      '<div class="opt-desc">' + c.desc + '</div></div>' +
+      '<span class="opt-icon">' + c.icon + '</span>';
+    el.onclick = function(){ selectChai(c.id); };
+    grid.appendChild(el);
+  });
+}
+
+// ── Listen to Firebase — updates ALL devices in real time ────
+function startListening() {
+  votesRef.on('value', function(snapshot) {
+    var data = snapshot.val() || {};
+    chais.forEach(function(c){ votes[c.id] = data[c.id] || 0; });
+    totalVotes = 0;
+    chais.forEach(function(c){ totalVotes += votes[c.id]; });
+    document.getElementById('voteCountEl').textContent =
+      totalVotes + ' vote' + (totalVotes !== 1 ? 's' : '') + ' cast today';
+    updateBallotPapers();
+    // Refresh results panel live if it's currently showing
+    if (document.getElementById('resultsSection').style.display === 'block') {
+      renderResults();
+    }
+  });
+}
+
+// ── Select a chai ────────────────────────────────────────────
+function selectChai(id) {
+  if (hasVoted) return;
+  selected = id;
+  document.querySelectorAll('.chai-opt').forEach(function(el){ el.classList.remove('selected'); });
+  document.getElementById('opt-' + id).classList.add('selected');
+  document.getElementById('submitBtn').disabled = false;
+}
+
+// ── Cast vote → write to Firebase ────────────────────────────
+function isDeadlinePassed() {
+  var deadline = new Date('2026-04-23T23:59:59+05:30');
+  return new Date() > deadline;
+}
+
+function castVote() {
+  if (!selected || hasVoted) return;
+  if (isDeadlinePassed()) {
+    alert('Voting has closed! Results are final.');
+    return;
+  }
+  hasVoted = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '✓  VOTE CAST — THANK YOU!';
+
+  // Atomic increment in Firebase
+  var ref = db.ref('votes/' + selected);
+  ref.transaction(function(current) {
+    return (current || 0) + 1;
+  });
+
+  setTimeout(function() {
+    document.getElementById('voteSection').style.display = 'none';
+    document.getElementById('resultsSection').style.display = 'block';
+    renderResults();
+  }, 900);
+}
+
+// ── Render results panel ─────────────────────────────────────
+function renderResults() {
+  var sorted = chais.slice().sort(function(a,b){ return votes[b.id] - votes[a.id]; });
+  var maxV = 0;
+  chais.forEach(function(c){ if (votes[c.id] > maxV) maxV = votes[c.id]; });
+  if (maxV < 1) maxV = 1;
+
+  var list = document.getElementById('resultsList');
+  list.innerHTML = '';
+  sorted.forEach(function(c, i) {
+    var barW = Math.round((votes[c.id] / maxV) * 100);
+    var row  = document.createElement('div');
+    row.className = 'result-row';
+    row.innerHTML =
+      '<span class="result-label">' + c.icon + ' ' + c.name + '</span>' +
+      '<div class="bar-track"><div class="bar-fill' + (i === 0 && votes[c.id] > 0 ? ' leading' : '') +
+      '" style="width:' + barW + '%"></div></div>' +
+      '<span class="result-votes">' + votes[c.id] + 'v</span>';
+    list.appendChild(row);
+  });
+
+  var w = sorted[0];
+  document.getElementById('winnerBanner').innerHTML =
+    '🏆 LEADING: ' + w.icon + ' ' + w.name.toUpperCase() +
+    ' &nbsp;·&nbsp; ' + votes[w.id] + ' VOTE' + (votes[w.id] !== 1 ? 'S' : '');
+
+  var db2 = document.getElementById('deadlineBanner');
+  if (isDeadlinePassed()) {
+    db2.innerHTML = '🔒 VOTING CLOSED · FINAL RESULTS';
+    db2.style.color = '#c8341a';
+    db2.style.fontWeight = '600';
+    document.querySelector('.vote-again-btn').style.display = 'none';
+  } else {
+    var deadline = new Date('2026-04-23T23:59:59+05:30');
+    var now = new Date();
+    var diff = deadline - now;
+    var days = Math.floor(diff / (1000*60*60*24));
+    db2.innerHTML = '🗓 VOTING CLOSES 23 APRIL 2026 · ' + days + ' DAYS LEFT';
+  }
+}
+
+// ── Next customer ─────────────────────────────────────────────
+function resetVote() {
+  hasVoted = false;
+  selected = null;
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('voteSection').style.display = 'block';
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '🗳 DROP IN BALLOT BOX';
+  document.querySelectorAll('.chai-opt').forEach(function(el){ el.classList.remove('selected'); });
+}
+
+// ── Reset all votes (end of day) ──────────────────────────────
+function clearAllVotes() {
+  if (!confirm('Reset ALL votes to zero? This cannot be undone.')) return;
+  votesRef.set({});   // wipes Firebase data
+  hasVoted = false;
+  selected = null;
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('voteSection').style.display = 'block';
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '🗳 DROP IN BALLOT BOX';
+  document.querySelectorAll('.chai-opt').forEach(function(el){ el.classList.remove('selected'); });
+}
+
+// ── Ballot papers visual ──────────────────────────────────────
+function updateBallotPapers() {
+  var bp   = document.getElementById('ballotPapers');
+  bp.innerHTML = '';
+  var show = Math.min(totalVotes, 5);
+  for (var i = 0; i < show; i++) {
+    var r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x',  String(28 + i * 2));
+    r.setAttribute('y',  String(8  - i * 1.5));
+    r.setAttribute('width','10'); r.setAttribute('height','10');
+    r.setAttribute('rx','1.5');   r.setAttribute('fill','#fff');
+    r.setAttribute('stroke','#c8341a'); r.setAttribute('stroke-width','1.2');
+    bp.appendChild(r);
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+buildGrid();
+startListening();
+if (isDeadlinePassed()) {
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '🔒 VOTING CLOSED — 23 APRIL 2026';
+  document.getElementById('voteCountEl').style.color = '#c8341a';
+}
+</script>
+</body>
+</html>
